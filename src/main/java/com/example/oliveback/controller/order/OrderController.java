@@ -21,19 +21,17 @@ public class OrderController {
     public ResponseEntity<OrderResponse> createOrder(
             @PathVariable String username,
             @Valid @RequestBody OrderRequest request) {
-        OrderResponse response = orderService.createOrder(username, request);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(orderService.createOrder(username, request));
     }
 
     @GetMapping("/{username}")
     public ResponseEntity<List<OrderResponse>> getUserOrders(@PathVariable String username) {
-        List<OrderResponse> orders = orderService.getUserOrders(username);
-        return ResponseEntity.ok(orders);
+        return ResponseEntity.ok(orderService.getUserOrders(username));
     }
 
     @GetMapping("/{username}/all")
     public ResponseEntity<List<OrderResponse>> getAllOrders(@PathVariable String username) {
-        List<OrderResponse> orders = orderService.getAllOrders(username);
-        return ResponseEntity.ok(orders);
+        return ResponseEntity.ok(orderService.getAllOrders(username));
     }
 }
+

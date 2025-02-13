@@ -22,22 +22,18 @@ public class ProductController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String category) {
-        List<ProductResponse> products = productService.getProducts(page, size, category);
-        return ResponseEntity.ok(products);
+        return ResponseEntity.ok(productService.getProducts(page, size, category));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ProductResponse> getProductById(@PathVariable Long id) {
-        ProductResponse product = productService.getProductById(id);
-        return ResponseEntity.ok(product);
+        return ResponseEntity.ok(productService.getProductById(id));
     }
 
     @PostMapping("/{username}")
     public ResponseEntity<ProductResponse> createProduct(
             @PathVariable String username,
             @Valid @RequestBody ProductRequest request) {
-        ProductResponse response = productService.createProduct(username, request);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(productService.createProduct(username, request));
     }
-
 }

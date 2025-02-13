@@ -5,6 +5,7 @@ import com.example.oliveback.domain.user.Role;
 import com.example.oliveback.domain.user.Users;
 import com.example.oliveback.dto.order.OrderRequest;
 import com.example.oliveback.dto.order.OrderResponse;
+import com.example.oliveback.exception.CustomException;
 import com.example.oliveback.repository.order.OrderRepository;
 import com.example.oliveback.repository.user.UsersRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +26,11 @@ public class OrderService {
     @Transactional
     public OrderResponse createOrder(String username, OrderRequest request) {
         Users user = usersRepository.findByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(CustomException.UserNotFoundException::new);
+
+        if (request.getQuantity() < 1) {
+            throw new CustomException.InvalidOrderException();
+        }
 
         Order newOrder = Order.builder()
                 .user(user)
@@ -42,7 +47,7 @@ public class OrderService {
     @Transactional(readOnly = true)
     public List<OrderResponse> getUserOrders(String username) {
         Users user = usersRepository.findByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(CustomException.UserNotFoundException::new);
 
         return orderRepository.findByUser(user)
                 .stream()
@@ -53,10 +58,10 @@ public class OrderService {
     @Transactional(readOnly = true)
     public List<OrderResponse> getAllOrders(String username) {
         Users user = usersRepository.findByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(CustomException.UserNotFoundException::new);
 
         if (user.getRole() != Role.ADMIN) {
-            throw new IllegalArgumentException("관리자만 주문 전체 조회가 가능합니다.");
+            throw new CustomException.AccessDeniedException();
         }
 
         return orderRepository.findAll()

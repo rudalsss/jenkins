@@ -18,21 +18,17 @@ public class UsersController {
 
     @PostMapping("/signup")
     public ResponseEntity<UserResponse> signup(@Valid @RequestBody UserSignupRequest request) {
-        UserResponse response = usersService.signup(request);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(usersService.signup(request));
     }
 
     @PostMapping("/login")
     public ResponseEntity<UserResponse> login(@Valid @RequestBody UserLoginRequest request) {
-        UserResponse response = usersService.login(request);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(usersService.login(request));
     }
 
-    @PostMapping("/logout")
-    public ResponseEntity<String> logout() {
-        String message = usersService.logout();
-        return ResponseEntity.ok(message);
-    }
+//    @PostMapping("/logout/{username}")  // ✅ PathVariable을 통해 사용자 로그아웃 요청 처리
+//    public ResponseEntity<String> logout(@PathVariable String username) {
+//        return ResponseEntity.ok(usersService.logout(username));
+//    }
 }
-
 
