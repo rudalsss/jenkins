@@ -5,6 +5,7 @@ import com.example.oliveback.domain.user.Role;
 import com.example.oliveback.domain.user.Users;
 import com.example.oliveback.dto.product.ProductRequest;
 import com.example.oliveback.dto.product.ProductResponse;
+import com.example.oliveback.exception.CustomException;
 import com.example.oliveback.repository.product.ProductRepository;
 import com.example.oliveback.repository.user.UsersRepository;
 import com.example.oliveback.service.product.ProductService;
@@ -24,17 +25,17 @@ import static org.mockito.Mockito.*;
 class ProductServiceTest {
 
     @InjectMocks
-    private ProductService productService;  // ✅ 실제 ProductService를 테스트할 객체
+    private ProductService productService;
 
     @Mock
-    private ProductRepository productRepository;  // ✅ 가짜 ProductRepository
+    private ProductRepository productRepository;
 
     @Mock
-    private UsersRepository usersRepository;  // ✅ 가짜 UsersRepository (관리자 권한 검증용)
+    private UsersRepository usersRepository;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);  // ✅ Mock 초기화
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
@@ -70,8 +71,7 @@ class ProductServiceTest {
         when(usersRepository.findByUsername(userUsername)).thenReturn(Optional.of(normalUser));
 
         // when & then
-        assertThrows(IllegalArgumentException.class, () -> productService.createProduct(userUsername, request),
-                "관리자만 상품을 등록할 수 있습니다.");
+        assertThrows(CustomException.AccessDeniedException.class, () -> productService.createProduct(userUsername, request));
     }
 
     @Test
@@ -95,8 +95,7 @@ class ProductServiceTest {
         when(productRepository.findById(999L)).thenReturn(Optional.empty());
 
         // when & then
-        assertThrows(IllegalArgumentException.class, () -> productService.getProductById(999L),
-                "존재하지 않는 상품입니다.");
+        assertThrows(CustomException.ProductNotFoundException.class, () -> productService.getProductById(999L));
     }
 
     @Test
@@ -117,3 +116,4 @@ class ProductServiceTest {
         assertEquals("히알루론산 크림", foundProducts.get(1).getName());
     }
 }
+

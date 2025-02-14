@@ -5,7 +5,6 @@ import com.example.oliveback.domain.user.Users;
 import com.example.oliveback.repository.user.UsersRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -16,15 +15,15 @@ import static org.mockito.Mockito.*;
 
 class UsersRepositoryTest {
 
-    @InjectMocks
-    private UsersRepository usersRepository;  // ✅ 가짜 UsersRepository 생성
+    @Mock
+    private UsersRepository usersRepository;  // UsersRepository를 Mock 객체로 생성
 
     @Mock
-    private Users mockUser;  // ✅ 가상의 사용자 데이터
+    private Users mockUser;  // 가상의 사용자 데이터
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
+        MockitoAnnotations.openMocks(this);  // Mock 객체 초기화
     }
 
     @Test

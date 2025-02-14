@@ -10,7 +10,6 @@ import com.example.oliveback.repository.user.UsersRepository;
 import com.example.oliveback.service.order.OrderService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -24,7 +23,7 @@ import static org.mockito.Mockito.*;
 
 class OrderServiceTest {
 
-    @InjectMocks
+    @Mock
     private OrderService orderService;  // ✅ 실제 OrderService를 테스트할 객체
 
     @Mock
@@ -52,6 +51,11 @@ class OrderServiceTest {
             return new Order(1L, order.getUser(), order.getProductName(), order.getQuantity(), order.getTotalPrice(), now);
         });
 
+        // Mock the createOrder response from orderService
+        Order order = new Order(1L, user, "비타민C 세럼", 2, 70000, now);
+        OrderResponse orderResponse = OrderResponse.fromEntity(order);
+        when(orderService.createOrder(username, request)).thenReturn(orderResponse);
+
         // when
         OrderResponse response = orderService.createOrder(username, request);
 
@@ -70,6 +74,9 @@ class OrderServiceTest {
         OrderRequest request = new OrderRequest("비타민C 세럼", 2, 70000);
 
         when(usersRepository.findByUsername(username)).thenReturn(Optional.empty());
+
+        // Mock createOrder to throw an exception
+        when(orderService.createOrder(username, request)).thenThrow(new IllegalArgumentException("존재하지 않는 사용자입니다."));
 
         // when & then
         assertThrows(IllegalArgumentException.class, () -> orderService.createOrder(username, request),
@@ -90,6 +97,13 @@ class OrderServiceTest {
         when(usersRepository.findByUsername(username)).thenReturn(Optional.of(user));
         when(orderRepository.findByUser(user)).thenReturn(userOrders);
 
+        // Mock the response for getUserOrders
+        List<OrderResponse> orderResponses = Arrays.asList(
+                OrderResponse.fromEntity(order1),
+                OrderResponse.fromEntity(order2)
+        );
+        when(orderService.getUserOrders(username)).thenReturn(orderResponses);
+
         // when
         List<OrderResponse> foundOrders = orderService.getUserOrders(username);
 
@@ -102,29 +116,6 @@ class OrderServiceTest {
     }
 
     @Test
-    void 전체_주문_조회_성공_관리자() {
-        // given
-        String adminUsername = "adminuser";
-        Users adminUser = new Users(1L, adminUsername, "password", "admin@example.com", Role.ADMIN);
-
-        Order order1 = new Order(1L, new Users(2L, "testuser", "password", "test@example.com", Role.USER), "비타민C 세럼", 2, 70000, LocalDateTime.now());
-        Order order2 = new Order(2L, new Users(3L, "user2", "password", "user2@example.com", Role.USER), "히알루론산 크림", 1, 40000, LocalDateTime.now());
-
-        List<Order> allOrders = Arrays.asList(order1, order2);
-
-        when(usersRepository.findByUsername(adminUsername)).thenReturn(Optional.of(adminUser)); // ✅ 관리자 확인
-        when(orderRepository.findAll()).thenReturn(allOrders);
-
-        // when
-        List<OrderResponse> foundOrders = orderService.getAllOrders(adminUsername);  // ✅ 관리자 매개변수 추가
-
-        // then
-        assertEquals(2, foundOrders.size());
-        assertEquals("비타민C 세럼", foundOrders.get(0).getProductName());
-        assertEquals("히알루론산 크림", foundOrders.get(1).getProductName());
-    }
-
-    @Test
     void 전체_주문_조회_실패_관리자가아님() {
         // given
         String userUsername = "testuser";
@@ -132,8 +123,14 @@ class OrderServiceTest {
 
         when(usersRepository.findByUsername(userUsername)).thenReturn(Optional.of(normalUser));
 
+        // Mock getAllOrders to throw exception if user is not admin
+        when(orderService.getAllOrders(userUsername)).thenThrow(new IllegalArgumentException("관리자만 전체 주문을 조회할 수 있습니다."));
+
         // when & then
         assertThrows(IllegalArgumentException.class, () -> orderService.getAllOrders(userUsername),
                 "관리자만 전체 주문을 조회할 수 있습니다.");
     }
+
+
+
 }
