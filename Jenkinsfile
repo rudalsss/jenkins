@@ -17,6 +17,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
+                    sh 'which docker'
                     // Docker 이미지 빌드
                     def app = docker.build("backend:${IMAGE_TAG}")
                 }
