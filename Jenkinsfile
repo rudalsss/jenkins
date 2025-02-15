@@ -14,6 +14,12 @@ pipeline {
             }
         }
 
+        stage('Build JAR') { 
+            steps {
+                sh './gradlew clean build'  // Gradle 빌드 수행
+            }
+        }
+
         stage('Build Docker Image') {
             steps {
                 script {
