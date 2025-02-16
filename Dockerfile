@@ -5,7 +5,7 @@ FROM amazoncorretto:17
 WORKDIR /app
 
 # ✅ JAR 파일 복사
-COPY build/libs/your-app.jar app.jar
+COPY build/libs/oliveback-0.0.1-SNAPSHOT.jar app.jar
 
 # ✅ 컨테이너가 실행될 때 사용할 포트 지정
 EXPOSE 8080
