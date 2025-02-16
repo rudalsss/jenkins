@@ -35,9 +35,9 @@ pipeline {
             steps {
                 script {
                     // ECR에 로그인
-                    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: '2502160524']]) {
+                    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'f1092972-d562-4db4-be31-ca975527944b']]) {
                         // ECR에 이미지 푸시
-                        withDockerRegistry([credentialsId: "2502160524", url: "${ECR_REPO}"]) {
+                        withDockerRegistry([credentialsId: "f1092972-d562-4db4-be31-ca975527944b", url: "${ECR_REPO}"]) {
                             app.push("${IMAGE_TAG}")
                         }
                     }
