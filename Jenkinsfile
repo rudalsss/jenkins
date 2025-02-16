@@ -35,9 +35,9 @@ pipeline {
             steps {
                 script {
                     // ECR에 로그인
-                    withCredentials([aws(credentialsId: "40c6115b-2ce0-48a7-a2b6-bf1fb4fbacb3")]) {
+                    withCredentials([aws(credentialsId: "2502160524")]) {
                         // ECR에 이미지 푸시
-                        withDockerRegistry([credentialsId: "40c6115b-2ce0-48a7-a2b6-bf1fb4fbacb3", url: "${ECR_REPO}"]) {
+                        withDockerRegistry([credentialsId: "2502160524", url: "${ECR_REPO}"]) {
                             app.push("${IMAGE_TAG}")
                         }
                     }
