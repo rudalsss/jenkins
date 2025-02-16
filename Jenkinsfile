@@ -17,7 +17,7 @@ pipeline {
         stage('Build JAR') { 
             steps {
                 sh 'chmod +x gradlew' // gradlew에 실행 권한을 부여
-                sh './gradlew clean build --no-daemon'  // Gradle 빌드 수행
+                sh './gradlew clean build'  // Gradle 빌드 수행
             }
         }
 
