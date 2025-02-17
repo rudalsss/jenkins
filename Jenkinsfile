@@ -41,7 +41,7 @@ pipeline {
                     //         app.push("${IMAGE_TAG}")
                     //     }
                     // }
-                    docker.withRegistry('https://${ECR_REPO}', 'f1092972-d562-4db4-be31-ca975527944b') {
+                    docker.withRegistry('https://${ECR_REPO}', 'AKIAYZZGTI47DYD2A6GZ') {
                             myapp = docker.build("${ECR_REPO}/backend:${IMAGE_TAG}")
                             myapp.push()
                     }
