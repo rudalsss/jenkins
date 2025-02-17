@@ -21,13 +21,35 @@ pipeline {
             }
         }
 
-        stage('Build Image & Push to ECR') {
+        // 이미지 빌드 및 푸시
+        stage('Build Image') {
             steps {
                 script {
                     docker.withRegistry("https://${ECR_REPO}/", 'f9a0baba-b98c-4c1f-b8a2-119d23049e32') {
-                            myapp = docker.build('jenkins-images')  // ECR URL 포함
-                            myapp.push("${IMAGE_TAG}")  // 태그 명시
+                        myapp = docker.build('jenkins-images')
                     }
+                }
+            }
+        }
+        
+        stage('Push Image to ECR') {
+            steps {
+                script {
+                    docker.withRegistry("https://${ECR_REPO}/", 'f9a0baba-b98c-4c1f-b8a2-119d23049e32') {
+                        myapp.push("${IMAGE_TAG}")
+                    }
+                }
+            }
+        }
+        
+        // 이미지 스캔
+        stage('Scan Image with Trivy') {
+            steps {
+                script {
+                    // ECR 레지스트리에서 이미지를 Trivy로 스캔
+                    sh '''
+                        trivy image ${ECR_REPO}:${IMAGE_TAG}
+                    '''
                 }
             }
         }
