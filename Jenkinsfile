@@ -78,6 +78,17 @@ pipeline {
                 }
             }
         }
+        
+        stage('SonarQube Analysis') {
+            steps {
+                script{
+                    scannerHome = tool 'sonar-scanner'
+                }
+                withSonarQubeEnv('jg-sonar-server') {  // SonarQube 서버 이름 지정 (Jenkins 설정에서 등록한 이름)
+                    sh './gradlew sonar'
+                }
+            }
+        }
 
         stage('OWASP Dependency-Check Vulnerabilities') {
             steps {
