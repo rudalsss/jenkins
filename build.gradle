@@ -2,6 +2,14 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.4.2'
     id 'io.spring.dependency-management' version '1.1.7'
+    id "org.sonarqube" version "6.0.1.5171"
+}
+
+sonar {
+  properties {
+    property "sonar.projectKey", "rudalsss_jenkins_78ad166b-9010-460b-b36b-21581d9f937a"
+    property "sonar.projectName", "jenkins"
+  }
 }
 
 group = 'com.example'
