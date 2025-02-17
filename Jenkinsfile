@@ -35,11 +35,15 @@ pipeline {
             steps {
                 script {
                     // ECR에 로그인
-                    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'f1092972-d562-4db4-be31-ca975527944b']]) {
-                        // ECR에 이미지 push
-                        withDockerRegistry([credentialsId: "f1092972-d562-4db4-be31-ca975527944b", url: "${ECR_REPO}"]) {
-                            app.push("${IMAGE_TAG}")
-                        }
+                    // docker.withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: '2502160524']]) {
+                    //     // ECR에 이미지 push
+                    //     docker.withRegistry([credentialsId: "2502160524", url: "${ECR_REPO}"]) {
+                    //         app.push("${IMAGE_TAG}")
+                    //     }
+                    // }
+                    docker.withRegistry('https://${ECR_REPO}', 'f1092972-d562-4db4-be31-ca975527944b') {
+                            myapp = docker.build("${ECR_REPO}/backend:${IMAGE_TAG}")
+                            myapp.push()
                     }
 
                     // 푸시 후 이미지 확인 (ouptut 콘솔)
