@@ -21,17 +21,17 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
-            steps {
-                script {
-                    sh 'which docker'
-                    // Docker 이미지 빌드
-                    def app = docker.build("backend:${IMAGE_TAG}")
-                }
-            }
-        }
+        // stage('Build Docker Image') {
+        //     steps {
+        //         script {
+        //             sh 'which docker'
+        //             // Docker 이미지 빌드
+        //             def app = docker.build("backend:${IMAGE_TAG}")
+        //         }
+        //     }
+        // }
 
-        stage('Push to ECR') {
+        stage('Build Image & Push to ECR') {
             steps {
                 script {
                     // ECR에 로그인
@@ -42,7 +42,7 @@ pipeline {
                     //     }
                     // }
                     docker.withRegistry('https://${ECR_REPO}', 'f9a0baba-b98c-4c1f-b8a2-119d23049e32') {
-                            myapp = docker.build("${ECR_REPO}/backend:${IMAGE_TAG}")
+                            myapp = docker.build("backend:${IMAGE_TAG}")
                             myapp.push()
                     }
 
