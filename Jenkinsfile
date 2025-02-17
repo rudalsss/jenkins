@@ -46,11 +46,25 @@ pipeline {
         stage('Scan Image with Trivy') {
             steps {
                 script {
-                    // ECR 레지스트리에서 이미지를 Trivy로 스캔
+                    // Trivy로 이미지 스캔하고 HTML 리포트 생성
                     sh '''
-                        trivy image ${ECR_REPO}:${IMAGE_TAG}
+                        trivy image --format template --template "@/path/to/template" ${ECR_REPO}:${IMAGE_TAG} -o trivy-report.html
                     '''
                 }
+            }
+        }
+
+        stage('Publish HTML Report') {
+            steps {
+                // Jenkins HTML Publisher Plugin을 이용하여 HTML 리포트 출력
+                publishHTML([
+                    allowMissing: false,
+                    alwaysLinkToLastBuild: false,
+                    keepAll: false,
+                    reportDir: '',
+                    reportFiles: 'trivy-report.html',  // 리포트 파일 경로
+                    reportName: 'Trivy Vulnerability Report'
+                ])
             }
         }
     }
