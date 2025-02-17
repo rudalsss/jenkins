@@ -42,8 +42,8 @@ pipeline {
                     //     }
                     // }
                     docker.withRegistry('https://${ECR_REPO}', 'f9a0baba-b98c-4c1f-b8a2-119d23049e32') {
-                            myapp = docker.build("backend:${IMAGE_TAG}")
-                            myapp.push()
+                            myapp = docker.build("${ECR_REPO}:${IMAGE_TAG}")  // ECR URL 포함
+                            myapp.push("${IMAGE_TAG}")  // 태그 명시
                     }
 
                     // 푸시 후 이미지 확인 (ouptut 콘솔)
