@@ -78,5 +78,19 @@ pipeline {
                 }
             }
         }
+
+        stage('OWASP Dependency-Check Vulnerabilities') {
+            steps {
+                dir("nodejs") { 
+                    dependencyCheck additionalArguments: ''' 
+                    -o './'
+                    -s './'
+                    -f 'ALL' 
+                    --prettyPrint''', odcInstallation: 'owasp'
+        
+    		        dependencyCheckPublisher pattern: 'dependency-check-report.xml'
+                }
+      	    }
+    	}
     }
 }
