@@ -48,7 +48,7 @@ pipeline {
                 script {
                     // Trivy로 이미지 스캔하고 HTML 리포트 생성
                     sh '''
-                        trivy image --format html ${ECR_REPO}:${IMAGE_TAG} -o trivy-report.html
+                        trivy image --format html --output trivy-report.html 605134473022.dkr.ecr.ap-northeast-2.amazonaws.com/jenkins-images:latest
                     '''
                 }
             }
