@@ -46,28 +46,37 @@ pipeline {
         stage('Scan Image with Trivy') {
             steps {
                 script {
-                    // Trivy로 이미지 스캔하고 HTML 리포트 생성
-                    sh '''
-                        trivy image --format html --output trivy-report.html 605134473022.dkr.ecr.ap-northeast-2.amazonaws.com/jenkins-images:latest
-                    '''
+                    try {
+                        // Trivy로 이미지 스캔하고 HTML 리포트 생성
+                        sh "trivy image --format html --output trivy-report.html ${ECR_REPO}:${IMAGE_TAG}"
+                        echo "Trivy scan completed"
+                    } catch (Exception e) {
+                        echo "Trivy scan failed: ${e.getMessage()}"
+                        currentBuild.result = 'FAILURE' // 빌드 상태를 실패로 설정
+                        throw e // 예외를 던져서 이후 단계를 실행하지 않도록 함
+                    }
                 }
             }
         }
 
         stage('Publish HTML Report') {
             steps {
-                // Jenkins HTML Publisher Plugin을 이용하여 HTML 리포트 출력
-                publishHTML([
-                    allowMissing: false,
-                    alwaysLinkToLastBuild: false,
-                    keepAll: false,
-                    reportDir: '',
-                    reportFiles: 'trivy-report.html',  // 리포트 파일 경로
-                    reportName: 'Trivy Vulnerability Report'
-                ])
+                script {
+                    // HTML 리포트가 존재하는지 확인하고 리포트를 출력
+                    if (fileExists('trivy-report.html')) {
+                        publishHTML([
+                            allowMissing: false,
+                            alwaysLinkToLastBuild: false,
+                            keepAll: false,
+                            reportDir: '',
+                            reportFiles: 'trivy-report.html',  // 리포트 파일 경로
+                            reportName: 'Trivy Vulnerability Report'
+                        ])
+                    } else {
+                        echo "Trivy report not found, skipping HTML report publishing"
+                    }
+                }
             }
         }
     }
 }
-
-// webhook-test!!!
