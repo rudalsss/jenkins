@@ -28,3 +28,10 @@ spring:
 
   profiles:
     active: local
+
+# 브라우저에서 헬스 체크 엔드포인트(/actuator/health)에 접속하여 애플리케이션이 정상적으로 동작하는지 확인
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
